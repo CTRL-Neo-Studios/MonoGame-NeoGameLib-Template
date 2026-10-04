@@ -1,0 +1,54 @@
+﻿name: Initialize Custom Template Fields
+
+on:
+  create:
+
+jobs:
+  setup:
+    if: github.repository != 'CTRL-Neo-Studios/MonoGame-NeoGameLib-Template'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Rename and Update .csproj Files
+        run: |
+          REPO_NAME="${{ github.event.repository.name }}"
+          
+          # 1. Replace the inner contents/namespaces of the csproj before renaming it
+          find . -name "MonoGame-NeoGameLib-Template.csproj" -type f | while read -r file; do
+            sed -i "s/MonoGame-NeoGameLib-Template/$REPO_NAME/g" "$file"
+          done
+          
+          # 2. Rename the actual file to <reponame>.csproj
+          find . -name "MonoGame-NeoGameLib-Template.csproj" -type f | while read -r file; do
+            dir=$(dirname "$file")
+            mv "$file" "$dir/$REPO_NAME.csproj"
+          done
+
+      - name: Replace Text In Other Files (SLN, Source Code)
+        run: |
+          REPO_NAME="${{ github.event.repository.name }}"
+          
+          # Update references inside your Solution (.sln) and C# (.cs) files
+          find . -type f \( -name "*.sln" -o -name "*.cs" -o -name "*.json" \) | while read -r file; do
+            sed -i "s/MonoGame-NeoGameLib-Template/$REPO_NAME/g" "$file"
+          done
+
+      - name: Clean up workflow file (Optional)
+        run: |
+          # This deletes this initialization workflow so it doesn't stay in the user's new repo
+          rm -rf .github/workflows/init-template.yml
+
+      - name: Commit and Push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          git add .
+          if [ -n "$(git status --porcelain)" ]; then
+            git commit -m "chore: customize project structure for $REPO_NAME"
+            git push
+          fi

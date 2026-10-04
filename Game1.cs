@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using NeoGameLib;
 
-namespace NeoGameLibProjectTemplate;
+namespace NeoGameLibProjectNamespace;
 
 public class Game1 : NeoGame
 {

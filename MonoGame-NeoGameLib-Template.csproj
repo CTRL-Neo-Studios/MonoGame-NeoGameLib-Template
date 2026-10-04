@@ -30,4 +30,7 @@
   <ItemGroup>
     <Folder Include="Content\Scripts\" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include=".github\workflows\init-template.yml" />
+  </ItemGroup>
 </Project>

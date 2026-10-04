@@ -1,2 +1,2 @@
-﻿using var game = new NeoGameLibProjectTemplate.Game1();
+﻿using var game = new NeoGameLibProjectNamespace.Game1();
 game.Run();
